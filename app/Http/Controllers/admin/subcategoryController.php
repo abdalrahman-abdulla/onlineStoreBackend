@@ -26,6 +26,21 @@ class subcategoryController extends Controller
             'category_id' => $category->id,
             'slug' =>$slug
         ]);
+        try {
+            $subcategory=Subcategory::create([
+                'name' => $request['name'],
+                'description' => $request['description'],
+                'category_id' => $category->id,
+                'slug' =>$slug
+            ]);
+        } catch (\Throwable $th) {
+            $subcategory=Subcategory::create([
+                'name' => $request['name'],
+                'description' => $request['description'],
+                'category_id' => $category->id,
+                'slug' =>$slug . time()
+            ]);
+        }
         return response()->json(new subcategoryResource($subcategory), 200);
     }
     public function update(Request $request,$id)
