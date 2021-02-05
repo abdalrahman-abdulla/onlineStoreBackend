@@ -20,12 +20,6 @@ class subcategoryController extends Controller
         $slug= trim(preg_replace("/[^a-z0-9_\s\-ءاأإآؤئبتثجحخدذرزسشصضطظعغفقكلمنهويةى]#u/", "", $request['name']), '-');
         $slug=preg_replace('/\s+/', '-', $slug);
         $category=category::findOrFail($request['category']);
-        $subcategory=Subcategory::create([
-            'name' => $request['name'],
-            'description' => $request['description'],
-            'category_id' => $category->id,
-            'slug' =>$slug
-        ]);
         try {
             $subcategory=Subcategory::create([
                 'name' => $request['name'],
