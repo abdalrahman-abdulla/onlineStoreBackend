@@ -62,14 +62,25 @@ class itemController extends Controller
         $Subcategory=Subcategory::findOrFail($request['subcategory']);
         $slug= trim(preg_replace("/[^a-z0-9_\s\-ءاأإآؤئبتثجحخدذرزسشصضطظعغفقكلمنهويةى]#u/", "", $request['name']), '-');
         $slug=preg_replace('/\s+/', '-', $slug);
-        $item->update([
-            'name' => $request['name'],
-            'description' => $request['description'],
-            'price' =>  $request['price'],
-            'quantity' => $request['quantity'],
-            'subcategory_id' => $request['subcategory'],
-            'slug' => $slug,
-        ]);
+        try {
+            $item->update([
+                'name' => $request['name'],
+                'description' => $request['description'],
+                'price' =>  $request['price'],
+                'quantity' => $request['quantity'],
+                'subcategory_id' => $request['subcategory'],
+                'slug' => $slug,
+            ]);
+        } catch (\Throwable $th) {
+            $item->update([
+                'name' => $request['name'],
+                'description' => $request['description'],
+                'price' =>  $request['price'],
+                'quantity' => $request['quantity'],
+                'subcategory_id' => $request['subcategory'],
+                'slug' => $slug . time(),
+            ]);
+        }
         if($request->photo){
             $name=$slug . time() . '.'. explode( '/' ,explode (':',substr($request->photo,0,strpos($request->photo,';')))[1])[1];
             $img=\Image::make($request->photo)->save(public_path("img\items\\").$name);
@@ -87,11 +98,8 @@ class itemController extends Controller
         $item=Item::findOrFail($id);
         File::delete(public_path("img\items\\").$item->image);
         $item->delete();
-
         return response()->json('success', 200);
     }
-
-
 
     public function savePhoto(Request $request)
     {
