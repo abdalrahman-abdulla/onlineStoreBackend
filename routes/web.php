@@ -1,5 +1,5 @@
 <?php
-
+//use File;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,3 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('test', function() {
+    return pathinfo((Storage::disk('google')->put('test.txt', 'Hello World')),PATHINFO_FILENAME);
+});

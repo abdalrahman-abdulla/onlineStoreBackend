@@ -12,34 +12,37 @@ class subcategoryController extends Controller
 {
     public function index(Request $request)
     {
-       return !$request['category_id']?  subcategoryResource::collection(Subcategory::all()) :  subcategoryResource::collection(Subcategory::where('category_id',$request['category_id'])->get());
-
+        return !$request['category_id']?  subcategoryResource::collection(Subcategory::all()) :  subcategoryResource::collection(Subcategory::where('category_id',$request['category_id'])->get());
     }
     public function store(Request $request)
     {
+        $this->validate($request , [
+            'name'=>'required|unique:subcategories',
+            'description' => 'required',
+        ],[
+            'required' =>'هذا الحقل مطلوب',
+            'name.unique' => "هذا الاسم مستخدم",
+        ]);
         $slug= trim(preg_replace("/[^a-z0-9_\s\-ءاأإآؤئبتثجحخدذرزسشصضطظعغفقكلمنهويةى]#u/", "", $request['name']), '-');
         $slug=preg_replace('/\s+/', '-', $slug);
         $category=category::findOrFail($request['category']);
-        try {
-            $subcategory=Subcategory::create([
-                'name' => $request['name'],
-                'description' => $request['description'],
-                'category_id' => $category->id,
-                'slug' =>$slug
-            ]);
-        } catch (\Throwable $th) {
-            $subcategory=Subcategory::create([
-                'name' => $request['name'],
-                'description' => $request['description'],
-                'category_id' => $category->id,
-                'slug' =>$slug . time()
-            ]);
-        }
+        $subcategory=Subcategory::create([
+            'name' => $request['name'],
+            'description' => $request['description'],
+            'category_id' => $category->id,
+            'slug' =>$slug
+        ]);
         return response()->json(new subcategoryResource($subcategory), 200);
     }
     public function update(Request $request,$id)
     {
-        $Subcategory=Subcategory::findOrFail($request['id']);
+        $this->validate($request , [
+            'name'=>'required|unique:subcategories,name,'. $id .",id",
+            'description' => 'required',
+        ],[
+            'required' =>'هذا الحقل مطلوب',
+            'name.unique' => "هذا الاسم مستخدم",
+        ]);
         $slug= trim(preg_replace("/[^a-z0-9_\s\-ءاأإآؤئبتثجحخدذرزسشصضطظعغفقكلمنهويةى]#u/", "", $request['name']), '-');
         $slug=preg_replace('/\s+/', '-', $slug);
         $subcategory=Subcategory::findOrFail($id);
@@ -49,6 +52,7 @@ class subcategoryController extends Controller
             'category_id' => $request['category'],
             'slug' =>$slug
         ]);
+
         return response()->json(new subcategoryResource($subcategory), 200);
     }
 

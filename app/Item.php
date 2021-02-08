@@ -17,8 +17,29 @@ class Item extends Model
     }
     public function orders()
     {
-
-        return $this->belongsToMany('App\order','order_item')->withTimestamps()->withPivot(['quantity']);;
-
+        return $this->belongsToMany('App\order','order_item')->withTimestamps()->withPivot(['quantity']);
     }
+    public function deleteImageFromGoogleDrive()
+    {
+        $files = collect(\Storage::disk('google')->listContents('/', false));
+        foreach($files as $file) {
+            if ($file['filename'].'.'.$file['extension'] == $this->image) {
+                \Storage::disk('google')->deleteDirectory($file['path']);
+                break;
+            }
+        }
+        return 'done';
+    }
+
+    public function getImageList()
+    {
+        return collect(\Storage::disk('google')->listContents('/', false));
+    }
+
+    public function getImageFromGoogleDrive()
+    {
+        return 'https://drive.google.com/thumbnail?id='.collect(\Storage::disk('google')->listContents('/', false))->where('filename', '=', pathinfo($this->image, PATHINFO_FILENAME))
+            ->where('extension', '=', pathinfo($this->image, PATHINFO_EXTENSION))->first()['path'];
+    }
+
 }

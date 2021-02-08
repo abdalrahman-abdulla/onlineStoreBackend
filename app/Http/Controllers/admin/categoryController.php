@@ -20,25 +20,39 @@ class categoryController extends Controller
     }
     public function store(Request $request)
     {
+        $this->validate($request , [
+            'name'=>'required|unique:categories',
+            'description' => 'required',
+        ],[
+            'required' =>'هذا الحقل مطلوب',
+            'name.unique' => "هذا الاسم مستخدم",
+        ]);
         $slug= trim(preg_replace("/[^a-z0-9_\s\-ءاأإآؤئبتثجحخدذرزسشصضطظعغفقكلمنهويةى]#u/", "", $request['name']), '-');
         $slug=preg_replace('/\s+/', '-', $slug);
         $category=category::create([
             'name' => $request['name'],
             'description' => $request['description'],
-            'user_id' => 1,
+            'user_id' => auth()->user()->id,
             'slug' =>$slug
         ]);
         return response()->json(new categoryResource($category), 200);
     }
     public function update(Request $request,$id)
     {
+        $this->validate($request , [
+            'name'=>'required|unique:categories,name,'. $id .",id",
+            'description' => 'required',
+        ],[
+            'required' =>'هذا الحقل مطلوب',
+            'name.unique' => "هذا الاسم مستخدم",
+        ]);
         $category=category::findOrFail($id);
         $slug= trim(preg_replace("/[^a-z0-9_\s\-ءاأإآؤئبتثجحخدذرزسشصضطظعغفقكلمنهويةى]#u/", "", $request['name']), '-');
         $slug=preg_replace('/\s+/', '-', $slug);
         $category->update([
             'name' => $request['name'],
             'description' => $request['description'],
-            'user_id' => 1,
+            'user_id' =>  auth()->user()->id,
             'slug' =>$slug
         ]);
         return response()->json(new categoryResource($category), 200);
