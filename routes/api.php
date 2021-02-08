@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use App\Item;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -76,8 +76,4 @@ Route::group([
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
-});
-
-Route::get('/aa', function () {
-    return \Storage::disk('google')->listContents('/', false);
 });
