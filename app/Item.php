@@ -42,7 +42,7 @@ class Item extends Model
         ->where('filename', '=', pathinfo($this->image, PATHINFO_FILENAME))
         ->where('extension', '=', pathinfo($this->image, PATHINFO_EXTENSION))
         ->first();
-        return  $image['path'];
+        return  $image->path;
     }
 
 }
