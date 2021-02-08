@@ -22,7 +22,7 @@ class itemResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => 'ss',
+            'image' => $this->getImageFromGoogleDrive(),
             'price' => $this->price,
             'quantity' => $this->quantity,
             'slug' => $this->slug,
