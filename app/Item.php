@@ -41,7 +41,7 @@ class Item extends Model
         $files = collect(\Storage::disk('google')->listContents('/', false));
         foreach($files as $file) {
             if ($file['filename'].'.'.$file['extension'] == $this->image) {
-                return $file['path']
+                return $file['path'];
                 break;
             }
         }
