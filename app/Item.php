@@ -38,11 +38,14 @@ class Item extends Model
 
     public function getImageFromGoogleDrive()
     {
-        $image = collect(\Storage::disk('google')->listContents('/', false))->where('type', '=', 'file')
-        ->where('filename', '=', pathinfo($this->image, PATHINFO_FILENAME))
-        ->where('extension', '=', pathinfo($this->image, PATHINFO_EXTENSION))
-        ->first();
-        return 'https://drive.google.com/thumbnail?id=' . $image['path'];
+        $files = collect(\Storage::disk('google')->listContents('/', false));
+        foreach($files as $file) {
+            if ($file['filename'].'.'.$file['extension'] == $this->image) {
+                return $file['path']
+                break;
+            }
+        }
+        return false;
     }
 
 }
